@@ -12,6 +12,17 @@ import json
 import mlflow
 from urllib.parse import urlparse
 
+
+def eval_metrics(actual, pred):
+    rmse = np.sqrt(mean_squared_error(actual, pred))
+    mae = mean_absolute_error(actual, pred)
+    # mse = mean_squared_error(actual, pred)
+    r2 = r2_score(actual, pred)
+
+    # return rmse, mae, mse, r2
+    return rmse, mae, r2
+
+
 def train_and_evaluate(config_path):
     config = read_param(config_path)
     train_data_path = config["split_data"]["train_path"]
@@ -31,8 +42,42 @@ def train_and_evaluate(config_path):
     train = pd.read_csv(train_data_path)
     test = pd.read_csv(test_data_path)
 
+    train_y = train[target]
+    test_y = test[target]
 
+    train_x = train.drop(target, axis=1)
+    test_x = test.drop(target, axis=1)
 
+    ########################
+
+    lr = ElasticNet(alpha=alpha, l1_ratio=l1_ratio, random_state=random_state)
+    lr.fit(train_x, train_y)
+    
+    predicted_qualities = lr.predict(test_x)
+    (rmse, mae, r2) = eval_metrics(test_y, predicted_qualities)
+    
+    print("ElasticNet model (alpha=%f, l1_ratio=%f,):" %(alpha, l1_ratio))
+
+    score_files = config["reports"]["score"]
+    params_files = config["reports"]["params"]
+
+    with open(score_files, 'w') as f:
+        scores = {
+            "rmse": rmse,
+            "mae": mae,
+            "r2": r2
+        }
+        json.dump(scores, f)
+
+    with open(params_files, 'w') as f:
+        params = {
+            "alpha": alpha,
+            "l1_ratio": l1_ratio
+        }
+        json.dump(params, f)
+
+    model_path = config["model_path"]
+    joblib.dump(lr, model_path)
 
 
 if __name__=="__main__":
