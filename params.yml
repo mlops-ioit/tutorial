@@ -31,5 +31,5 @@ mlflow_config:
   experiment_name: insurance_aissm
   run_name: mlops
   registered_model_name: ElasticNet
-  remote_server_url: http://127.0.0.1:5000
+  remote_server_uri: http://127.0.0.1:5000
 

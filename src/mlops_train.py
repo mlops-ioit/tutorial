@@ -98,14 +98,22 @@ def train_and_evaluate(config_path):
         # joblib.dump(lr, model_path)
 
         tracking_uri_type = urlparse(mlflow.get_tracking_uri()).scheme
+
+
         if tracking_uri_type != "file":
             mlflow.sklearn.log_model(lr, "model", registered_model_name=mlflow_config["registered_model_name"])
         else:
+            # Ensure model directory exists
+            os.makedirs(model_dir, exist_ok=True)  
+
+            # Save model in the directory
             model_path = os.path.join(model_dir, "model.pkl")
             joblib.dump(lr, model_path)
-        os.mkdir(model_path, exist_ok=True)
-        model_path = os.path.join(model_dir, "model.joblib")
-        joblib.dump(lr, model_path)
+
+            model_path = os.path.join(model_dir, "model.joblib")
+            joblib.dump(lr, model_path)
+
+
 
 
 
