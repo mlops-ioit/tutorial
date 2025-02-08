@@ -50,14 +50,13 @@ jobs:
       - name: Build Docker Image
         run: |
           docker-compose -f docker-compose.yml build
-          docker images  # ✅ List images for debugging
+          docker images  # ✅ Debug: List built images
 
       - name: Log in to Docker Hub
         run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
       - name: Tag and Push Docker Image
         run: |
-          docker tag mlops_app:latest tejas9111/webapp:latest
-          docker push tejas9111/webapp:latest
-        env:
-          DOCKER_CLI_ACI: 1
+          IMAGE_NAME="webapp"
+          docker tag $IMAGE_NAME:latest tejas9111/$IMAGE_NAME:latest
+          docker push tejas9111/$IMAGE_NAME:latest
