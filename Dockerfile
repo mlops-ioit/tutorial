@@ -31,4 +31,4 @@ RUN python -m venv /py && \
 USER appuser
 
 # Run the Django server
-CMD ["/py/bin/python", "/app/webapp/manage.py", "runserver", "0.0.0.0:8000"]
+# CMD ["/py/bin/python", "/app/webapp/manage.py", "runserver", "0.0.0.0:8000"]
