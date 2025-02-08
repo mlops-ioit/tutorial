@@ -83,7 +83,7 @@ DATABASES = {
         "NAME": "aissms",
         "USER": "postgres",
         "PASSWORD": "admin",
-        "HOST": "localhost",
+        "HOST": "db",
         "PORT": "5432",
     }
 }
